@@ -54,6 +54,9 @@ namespace NJsonSchema.CodeGeneration.TypeScript.Models
         /// <summary>Gets the name for the discriminator check.</summary>
         public string DiscriminatorName { get; }
 
+        /// <summary>Gets a value indicating whether to generate interface discriminator properties in interfaces.</summary>
+        public bool GenerateInterfaceDiscriminator => _settings.TypeScriptVersion >= 2.0m;
+
         /// <summary>Gets a value indicating whether the class has a discriminator property.</summary>
         public bool HasDiscriminator => !string.IsNullOrEmpty(_schema.Discriminator);
         

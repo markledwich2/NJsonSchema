@@ -75,6 +75,47 @@ namespace NJsonSchema.CodeGeneration.Tests.TypeScript
         }
 
         [TestMethod]
+        public async Task When_allOf_schema_is_object_type_then_it_is_a_interface_with_discriminator()
+        {
+            //// Arrange
+            var json = @"{
+                '$schema': 'http://json-schema.org/draft-04/schema#',
+                'type': 'object',
+                'properties': { 
+                    'prop2' : { 'type' : 'string' } 
+                },
+                'allOf': [
+                    {
+                        '$ref': '#/definitions/Foo'
+                    }
+                ], 
+                'definitions': {
+                    'Foo':  {
+                        'type': 'object', 
+                        'discriminator': 'discriminator', 
+                        'required': ['discriminator'], 
+                        'properties': { 
+                            'discriminator' : { 'type' : 'string' },
+                            'prop1' : { 'type' : 'string' } 
+                        }
+                    }
+                }
+            }";
+
+            //// Act
+            var schema = await JsonSchema4.FromJsonAsync(json);
+            var generator = new TypeScriptGenerator(schema, new TypeScriptGeneratorSettings
+            {
+                TypeStyle = TypeScriptTypeStyle.Interface, 
+                TypeScriptVersion = 2.0m
+            });
+            var code = generator.GenerateFile("Bar");
+
+            //// Assert
+            Assert.IsTrue(code.Contains("interface Foo extends Bar"));
+        }
+
+        [TestMethod]
         public async Task When_property_name_does_not_match_property_name_then_casing_is_correct_in_output()
         {
             //// Arrange
